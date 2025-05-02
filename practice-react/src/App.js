@@ -1,33 +1,43 @@
 import './App.css';
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
+const useDebounce1 = (query) => {
+  const [dbQuery, setDbQuery] = useState('')
+  useEffect(() => {
 
-
-const Modalwindow = ({isOpen, togleModal, closeModal}) => {
-  return (<div className='mCont'
-  onClick={(e) => {
-    if(e.target.className !== 'mCont' && e.target.className !== 'mContent') {
-      closeModal()
-    }
-  }}>
-    {isOpen && (<div className='mContent'>
-      <button onClick={() => togleModal()}>Toggle</button>
-    This is Modal
-  </div>) }
-    
-  </div>)
+    const timer = setTimeout(() => {
+      setDbQuery(query)
+    }, 1000)
+    return () => {clearTimeout(timer)}
+  },[query])
+  return dbQuery
 }
+
+
+
 function App() {
-  const [isOpen, setIsOpen] = useState(false)
-  function togleModal() {
-    return setIsOpen(prev => !prev)
-  }
-  function closeModal() {
-    setIsOpen(false)
-  }
+  const fruits = ["apple","banana"]
+  const [val, setVal] = useState('')
+  const [filterF, setFilterF] = useState(fruits)
+  const dbQuery = useDebounce1(val)
+  useEffect(() => {
+    setFilterF(fruits.filter(p => p.includes(dbQuery)))
+  }, [dbQuery])
   return (
-    <div className="App">
-      <button onClick={togleModal}>Open</button>
-      <Modalwindow isOpen={isOpen} closeModal={closeModal} togleModal={togleModal}/>
+    <div >
+      <input type='text' value={val} onChange={(e) => setVal(e.target.value)}/>
+      <ul>
+
+            {
+
+                filterF.map(p => {
+                  return <li>
+                    {p}
+                  </li>
+                })
+            }
+      </ul>
+      
+      
     </div>
   );
 }
