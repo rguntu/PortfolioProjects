@@ -1,6 +1,8 @@
 //@desc get posts
 //@route GET /api/posts
+var posts = [{id:1, title: "post1"}]
 export const getPosts = ((req, res) => {
+    console.log("posts")
     const limit = parseInt(req.query.limit)
     if(!isNaN(limit) && limit > 0) {
         res.status(200).json(posts.slice(0,1))

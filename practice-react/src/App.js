@@ -1,43 +1,58 @@
 import './App.css';
 import React, {useEffect, useState} from 'react'
-const useDebounce1 = (query) => {
-  const [dbQuery, setDbQuery] = useState('')
-  useEffect(() => {
 
-    const timer = setTimeout(() => {
-      setDbQuery(query)
-    }, 1000)
-    return () => {clearTimeout(timer)}
-  },[query])
-  return dbQuery
-}
-
-
-
+//https://jsonplaceholder.org/users
 function App() {
-  const fruits = ["apple","banana"]
-  const [val, setVal] = useState('')
-  const [filterF, setFilterF] = useState(fruits)
-  const dbQuery = useDebounce1(val)
+  const [data, setData] = useState([])
+  const [val, setVal] = useState()
+  const [fData, setFData] = useState([])
+
   useEffect(() => {
-    setFilterF(fruits.filter(p => p.includes(dbQuery)))
-  }, [dbQuery])
+    if(val) {
+      const timer1 = setTimeout(() => {
+        setFData(data.filter(user => {
+          return user.name.includes(val)
+        }))
+      }, 1000)
+      return () => clearTimeout(timer1)
+    } else {
+      setFData(data)
+    }
+    
+  }, [val])
+  useEffect( () => {
+    async function getData() {
+      try {
+        const resp = await fetch('https://jsonplaceholder.typicode.com/users')
+        if(resp.ok) {
+          const d1 = await resp.json()
+          setData(d1)
+          setFData(d1)
+        }
+      } catch(error) {
+        console.log("error", error)
+      }
+    }
+    getData()
+   
+  }, [])
+
   return (
-    <div >
-      <input type='text' value={val} onChange={(e) => setVal(e.target.value)}/>
-      <ul>
+    <div>
 
-            {
-
-                filterF.map(p => {
-                  return <li>
-                    {p}
-                  </li>
-                })
-            }
-      </ul>
-      
-      
+      <input type="text" value={val} onChange={(e) => setVal(e.target.value)} />
+    <div style={{display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gridTemplateRows: "1fr 1fr",
+      gridGap: "10px",
+      marginTop: "6px"
+    }}>
+      {fData.map(user => {
+        return <div>
+          <p>{user.name}</p>
+        </div>
+      })}
+    </div>
     </div>
   );
 }

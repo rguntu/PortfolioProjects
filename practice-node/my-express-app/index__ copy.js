@@ -10,16 +10,17 @@ app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 app.use(logger)
 
-
-app.get('/', (req,res) => {
-    res.send("Hello, World!")
-})
-
 app.use((req,res, next) => {
     const error = new Error("wrong route")
     error.status = 500
     next(error)
 
+})
+
+
+
+app.get('/', (req,res) => {
+    res.send("hello")
 })
 
 app.listen(port, () => {
