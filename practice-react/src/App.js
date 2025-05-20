@@ -2,57 +2,76 @@ import './App.css';
 import React, {useEffect, useState} from 'react'
 
 //https://jsonplaceholder.org/users
-function App() {
-  const [data, setData] = useState([])
-  const [val, setVal] = useState()
-  const [fData, setFData] = useState([])
+const CTimer = ({cData}) => {
+  // console.log(cData)
+  const [data, setData] = useState(cData)
+
+  // useEffect(() => {
+  //   setData(cData); // Sync when cData changes
+  // }, [cData]);
+
+  const f1 = () => {
+    const ct = setInterval(()=>{
+      setData(p => 
+        {
+          if(p > 0) {
+            return p-1
+          } else {
+            clearInterval(ct)
+            return 0
+            
+          }
+        }
+      )
+      
+      
+    }, 1000)
+    return  ct;
+  }
+   
 
   useEffect(() => {
-    if(val) {
-      const timer1 = setTimeout(() => {
-        setFData(data.filter(user => {
-          return user.name.includes(val)
-        }))
+    setData(cData);
+    let  ct;
+    const startCountDown = () => {
+      ct = setInterval(()=>{
+        setData(p => 
+          {
+            if(p > 0) {
+              return p-1
+            } else {
+              clearInterval(ct)
+              return 0
+              
+            }
+          }
+        )
+        
+        
       }, 1000)
-      return () => clearTimeout(timer1)
-    } else {
-      setFData(data)
     }
-    
-  }, [val])
-  useEffect( () => {
-    async function getData() {
-      try {
-        const resp = await fetch('https://jsonplaceholder.typicode.com/users')
-        if(resp.ok) {
-          const d1 = await resp.json()
-          setData(d1)
-          setFData(d1)
-        }
-      } catch(error) {
-        console.log("error", error)
-      }
-    }
-    getData()
-   
-  }, [])
+    let tim1;
+    tim1 = setTimeout(() => {
+     
+      startCountDown()
+    }, 3000)
+    return () => {
+      clearInterval(ct)
+      clearTimeout(tim1) }
+  },[cData])
+
+  return <div>
+    <p>{data}</p>
+  </div>
+}
+function App() {
+  const [data, setData] = useState(0)
+
 
   return (
-    <div>
-
-      <input type="text" value={val} onChange={(e) => setVal(e.target.value)} />
-    <div style={{display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gridTemplateRows: "1fr 1fr",
-      gridGap: "10px",
-      marginTop: "6px"
-    }}>
-      {fData.map(user => {
-        return <div>
-          <p>{user.name}</p>
-        </div>
-      })}
-    </div>
+    <div className="App">
+      <input type='text' value={data} onChange={e => setData(e.target.value)}/>
+      <CTimer cData={data} />
     </div>
   );
 }
