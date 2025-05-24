@@ -2,76 +2,62 @@ import './App.css';
 import React, {useEffect, useState} from 'react'
 
 //https://jsonplaceholder.org/users
-const CTimer = ({cData}) => {
-  // console.log(cData)
-  const [data, setData] = useState(cData)
-
-  // useEffect(() => {
-  //   setData(cData); // Sync when cData changes
-  // }, [cData]);
-
-  const f1 = () => {
-    const ct = setInterval(()=>{
-      setData(p => 
-        {
-          if(p > 0) {
-            return p-1
-          } else {
-            clearInterval(ct)
-            return 0
-            
-          }
-        }
-      )
-      
-      
-    }, 1000)
-    return  ct;
-  }
-   
-
-  useEffect(() => {
-    setData(cData);
-    let  ct;
-    const startCountDown = () => {
-      ct = setInterval(()=>{
-        setData(p => 
-          {
-            if(p > 0) {
-              return p-1
-            } else {
-              clearInterval(ct)
-              return 0
-              
-            }
-          }
-        )
-        
-        
-      }, 1000)
-    }
-    let tim1;
-    tim1 = setTimeout(() => {
-     
-      startCountDown()
-    }, 3000)
-    return () => {
-      clearInterval(ct)
-      clearTimeout(tim1) }
-  },[cData])
-
-  return <div>
-    <p>{data}</p>
-  </div>
-}
 function App() {
-  const [data, setData] = useState(0)
+ 
+  const [todo, setTodo] = useState({})
+  const [todos, setTodos] = useState([])
 
+  function handleToDos() {
+    console.log("in handleTdod")
+    console.log(todo)
+    if(todo.id) {
+     const mTodos = todos.map(p => p.id === todo.id ? {...p, text: todo.text} : p)
+     setTodos(mTodos)
+    } else {
+      setTodos([...todos, {id: Date.now(), text:todo.text, isComplete: false}])
+    }
+    
+    setTodo({})
+  }
 
+  function removeToDos(tid) {
+    
+    const fTodos = todos.filter(p => p.id !== tid)
+    setTodos(fTodos)
+  }
+
+  function updateToDo(todo) {
+    
+    setTodo(todo)
+  }
+  function deleteToDo(todo) {
+    
+    setTodo(todo)
+  }
+
+  function handleCheck(tid) {
+    console.log("handleCheck",tid)
+    const uTodos = todos.map(p => p.id === tid ? {...p, isComplete: !p.isComplete} : p)
+    setTodos(uTodos)
+  }
+  console.log(todos)
   return (
-    <div className="App">
-      <input type='text' value={data} onChange={e => setData(e.target.value)}/>
-      <CTimer cData={data} />
+    <div >
+      <input type='text' value={todo.text} onChange={e => setTodo({...todo, text: e.target.value})} /> 
+      <button onClick={handleToDos}>Add</button>
+      <ul>
+      {
+      
+      todos.map((t) => {
+        return <li key={t.id}>
+          {t.text} 
+          <input type='checkBox' checked={t.isComplete} onChange={()=>handleCheck(t.id)}/>
+          <button onClick={() => removeToDos(t.id)}>Remove</button>
+          <button onClick={() => updateToDo(t)}>Update</button>
+        </li>
+      })}
+      </ul>
+    
     </div>
   );
 }
