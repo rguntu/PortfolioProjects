@@ -1,5 +1,6 @@
 
 const array = [1, 2, 3, 4];
+const array2 = [1, 2, 3, 4];
 console.log(array.reverse())
 array.forEach()
 //remove duplicates
